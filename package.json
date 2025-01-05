@@ -1,0 +1,36 @@
+{
+  "name": "json-indexer",
+  "version": "1.1.2",
+  "description": "JsonIndexer is a utility class designed for efficient parsing and indexing of large JSON files. It reads the file in chunks to minimize memory usage, identifies specific arrays or objects by key, and builds an index for quick access. This index includes metadata such as the file position and length of each parsed object, making it ideal for applications requiring scalable handling of large datasets, such as data processing pipelines, search systems, or incremental updates.",
+  "main": "index.ts",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "anthonyarellano",
+  "license": "MIT",
+  "devDependencies": {
+    "typescript": "^5.7.2",
+    "@types/bun": "latest"
+  },
+  "keywords": [
+    "json",
+    "indexing",
+    "json-file",
+    "large-json",
+    "json-indexer",
+    "file-processing",
+    "typescript",
+    "type-safe",
+    "data-processing",
+    "chunked-reading",
+    "incremental-parsing",
+    "memory-efficient",
+    "large-files",
+    "data-indexing",
+    "streaming",
+    "scalable",
+    "file-utility",
+    "json-utility",
+    "data-management"
+  ]
+}
