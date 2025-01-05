@@ -9,8 +9,7 @@
   "author": "anthonyarellano",
   "license": "MIT",
   "devDependencies": {
-    "typescript": "^5.7.2",
-    "@types/bun": "latest"
+    "typescript": "^5.7.2"
   },
   "keywords": [
     "json",
