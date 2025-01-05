@@ -1,5 +1,29 @@
 import { BaseType, RequiredAdditionalKeys } from "./types";
 
+/**
+ * A utility class for efficiently indexing large JSON files by creating a memory-efficient index
+ * of object positions within the file. This allows for fast random access to specific records
+ * without loading the entire file into memory.
+ * 
+ * @template T Type parameter extending the base requirements of having an id, filePosition, and length
+ * 
+ * @example
+ * interface UserRecord {
+ *   id: string;
+ *   filePosition: number;
+ *   length: number;
+ *   name: string;
+ *   email: string;
+ * }
+ * 
+ * const file = new File([...], 'users.json');
+ * const indexer = new JsonIndexer<UserRecord>(
+ *   file,
+ *   'users',
+ *   ['name', 'email']
+ * );
+ * const index = await indexer.index();
+ */
 export class JsonIndexer<T extends { id: string, filePosition: number, length: number }> {
     file: File;
     key: string;
