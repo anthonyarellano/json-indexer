@@ -54,66 +54,87 @@ interface ShoeMetadata {
 
     // Extra keys that should be added to the index
     name: string;
+    size: number;
 }
 
 // Assume `file` is a File object representing your JSON file
-const file = new File([/* file content */], "data.json", { type: "application/json" });
+const file = new File([/* file content */], "data.json", { 
+  type: "application/json" 
+});
 
 // Create an instance of JsonIndexer
-const indexer = new JsonIndexer<ShoeMetadata>(file, "shoes", ["name"]);
+const indexer = new JsonIndexer(file);
 
-// Build the index
-const shoeIndex = await indexer.index();
+// Build the index with additional properties
+const shoeIndex = await indexer.index<ShoeMetadata>("shoes", ["name", "size"]);
 /**
  * Output:
- * {
- *  "1": { id, filePosition, length, name },
- *  "2": { id, filePosition, length, name }
+ * Map {
+ *   "1" => { 
+ *     id: "1",
+ *     filePosition: 123,
+ *     length: 456,
+ *     name: "Nike Air",
+ *     size: 42,
+ *   },
+ *   "2" => { ... }
  * }
-**/
+ **/
 
-// Subsequent lookups (Will be included as a utility in later version)
+// Subsequent lookups
 const metadata = shoeIndex.get('1');
-const chunk = file.slice(
-    metadata.filePosition,
-    metadata.filePosition + metadata.length
-)
-const record = JSON.parse(await chunk.text());
+if (metadata) {
+    const chunk = file.slice(
+        metadata.filePosition,
+        metadata.filePosition + metadata.length
+    );
+    const record = JSON.parse(await chunk.text());
+}
 ```
 
 ## API Reference
 
 ### `JsonIndexer<T>`
 
-A generic class for indexing JSON files.
+A class for indexing JSON files.
 
 #### Constructor
 
 ```typescript
-constructor(file: File, key: string, additionalIndexKeys: Array<RequiredAdditionalKeys<T>>, chunkSize = 1024 * 1024)
+constructor(file: File, chunkSize = 1024 * 1024)
 ```
 
 - `file` (`File`): The JSON file to index.
-- `key` (`string`): The key of the array to index (e.g., `"shoes"`).
-- `additionalIndexKeys` (`Array<keyof T>`): Keys to include in the index, beyond `id`, `filePosition`, and `length`.
 - `chunkSize` (`number`, __optional__): Size of each chunk read from the file (default: 1 MB).
 
 #### Methods
-- index(): `Promise<Map<string, T>>`
-    - Parses the file and builds an index.
-    - Returns a `Promise` resolving to a `Map` where the keys are the `id` values of the indexed objects, and the values are the indexed objects with metadata.
+`index<T>`
+
+```typescript
+async index<T extends { id: string, filePosition: number, length: number }>(
+    key: string,
+    additionalIndexKeys: Array<RequiredAdditionalKeys<T>> = []
+): Promise<Map<string, T>>
+```
+
+- Generic type T must extend the base type containing `id`, `filePosition`, and `length`.
+- `key` (`string`): The key of the array to index (e.g., `"shoes"`).
+- `additionalIndexKeys` (`Array<keyof T>`): Keys to include in the index, beyond the base requirements.
+- Returns a `Promise` resolving to a `Map` where the keys are the `id` values of the indexed objects, and the values are the indexed objects with metadata
 
 ## Benefits
 - __Memory Efficient__: Processes the file in chunks, avoiding high memory usage.
 - __Incremental Parsing__: Supports working with large files incrementally.
 - __Customizable Metadata__: Add aditional fields to the index for detailed object representation.
+- __Flexible Type System__: Generic type parameters at the method level for improved type safety and reusability
 
 ## Error Handling
 
-If you forget to include all required keys in `additionalIndexKeys`, the constructor will throw an error:
+If you forget to include all required keys in `additionalIndexKeys`, the `index()` method will throw an error:
 
 ```typescript
-const indexer = new JsonIndexer<Shoe>(file, "shoes", []);
+// This will throw an error because 'name' is required by the ShoeMetadata type
+const index = await indexer.index<ShoeMetadata>("shoes", []);
 // Error: Missing keys in additionalIndexKeys: name
 ```
 
