@@ -94,7 +94,7 @@ if (metadata) {
 
 ## API Reference
 
-### `JsonIndexer<T>`
+### `JsonIndexer`
 
 A class for indexing JSON files.
 
