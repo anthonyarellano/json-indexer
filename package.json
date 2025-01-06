@@ -31,5 +31,8 @@
     "file-utility",
     "json-utility",
     "data-management"
-  ]
+  ],
+  "repository": {
+    "url": "https://github.com/anthonyarellano/json-indexer"
+  }
 }
